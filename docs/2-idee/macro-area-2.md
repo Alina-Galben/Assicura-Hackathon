@@ -16,10 +16,6 @@ Un sistema intelligente che evolve insieme alla vita del cliente. Quando cambian
 
 Un ambiente digitale che consente di attivare coperture temporanee e mirate in pochi click. Perfetto per esigenze a breve termine, come un weekend sugli sci, un viaggio improvviso o un evento specifico. Le micro-polizze sono smart, economiche e semplici da gestire, dando al cliente la libertà di assicurarsi solo quando serve davvero, senza vincoli a lungo termine.
 
-### Assicurazione a Consumo (Pay-per-Use)
-
-Un modello rivoluzionario che elimina i costi fissi: si paga soltanto quando il rischio è effettivamente presente. Ad esempio, una polizza auto che si attiva solo quando il veicolo è in movimento, oppure una copertura casa che entra in funzione solo durante i periodi di vacanza. Questo approccio aumenta la trasparenza, riduce gli sprechi e offre una percezione di equità e innovazione.
-
 ### Contratti Interattivi "Zero Burocrazia"
 
 Un nuovo modo di leggere e comprendere i contratti assicurativi: niente più PDF complessi e pieni di gergo tecnico, ma schede interattive, animate e facili da consultare. Ogni clausola diventa un box chiaro, arricchito con icone, esempi pratici e spiegazioni semplici. La firma digitale, supportata da tecnologie blockchain, assicura sicurezza e tracciabilità. Un’esperienza che abbatte barriere e rende trasparente la relazione con il cliente.
