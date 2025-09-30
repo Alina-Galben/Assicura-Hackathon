@@ -1,11 +1,9 @@
 import express from "express";
-import dotenv from "dotenv";
+import passport from 'passport';
+import './src/config/passport.config.js';
 import cors from "cors";
 import connectDB from "./db.js";
 import authRoutes from "./src/routes/auth.routes.js";
-
-// Carichiamo le variabili d'ambiente dal file .env.local
-dotenv.config({ path: '.env.local' });
 
 const app = express();
 
@@ -13,6 +11,7 @@ connectDB();
 
 app.use(cors());
 app.use(express.json());
+app.use(passport.initialize()); // Inizializza Passport
 
 app.use('/api/v1/auth', authRoutes);
 

@@ -15,7 +15,10 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        required: true,
+        // La password è obbligatoria SOLO se non ci si registra tramite Google o Facebook.
+        required: function() {
+            return !this.googleId && !this.facebookId;
+        },
         select: false, // Non includere la password nelle query di default
     },
     isEmailConfirmed: {

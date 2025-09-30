@@ -181,3 +181,46 @@ export const confirmEmail = async (req, res) => {
     res.status(500).json({ message: 'Errore interno del server.' });
   }
 };
+
+// Funzione googleCallback che, proprio come il login normale, genera un token JWT
+export const googleCallback = (req, res) => {
+  // L'utente è stato autenticato da Passport e si trova in req.user
+  const payload = { id: req.user._id };
+
+  const token = jwt.sign(
+    payload,
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+  
+  // Quando avro il frontend reindirizzerò l'utente al frontend passandogli il token
+  res.status(200).json({
+    message: 'Autenticazione Google avvenuta con successo!',
+    token: token
+  });
+};
+
+// NUOVA funzione per il callback di Facebook è identica a quella di Google.
+export const facebookCallback = (req, res) => {
+  // L'utente è stato autenticato da Passport e si trova in req.user
+  const payload = { id: req.user._id };
+
+  const token = jwt.sign(
+    payload,
+    process.env.JWT_SECRET,
+    { expiresIn: '1h' }
+  );
+
+  res.status(200).json({
+    message: 'Autenticazione Facebook avvenuta con successo!',
+    token: token
+  });
+};
+
+// Funzione per il logout
+export const logout = async (req, res) => {
+  // Con un sistema basato su JWT, il server non deve fare nulla.
+  // La cancellazione del token è responsabilità del client.
+  // Inviamo semplicemente una risposta di successo.
+  res.status(200).json({ message: 'Logout avvenuto con successo.' });
+};
