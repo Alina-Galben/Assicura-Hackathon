@@ -3,6 +3,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendConfirmationEmail } from '../services/email.service.js';
+import { sendPasswordResetEmail } from '../services/email.service.js';
 
 // Funzione che gestisce la registrazione degli utenti
 export const register = async (req, res) => {
@@ -223,4 +224,81 @@ export const logout = async (req, res) => {
   // La cancellazione del token è responsabilità del client.
   // Inviamo semplicemente una risposta di successo.
   res.status(200).json({ message: 'Logout avvenuto con successo.' });
+};
+
+// Funzione e logica per la richiesta di reset
+export const forgotPassword = async (req, res) => {
+  try {
+    // 1. Trova l'utente tramite l'email inviata nel body della richiesta
+    const user = await User.findOne({ email: req.body.email });
+
+    // IMPORTANTE: Se non troviamo l'utente, inviamo comunque un messaggio di successo
+    // per non rivelare a un malintenzionato se un'email è registrata o meno.
+    if (!user) {
+      return res.status(200).json({ message: 'Se l\'email è registrata, riceverai un link per il reset.' });
+    }
+
+    // 2. Genera un token di reset
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    // 3. Salva il token HASHATO e la data di scadenza nel database
+    user.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    user.passwordResetExpires = Date.now() + 10 * 60 * 1000; // Scadenza tra 10 minuti
+
+    await user.save();
+
+    // RIGA E PER IL DEBUG
+    console.log('--- TOKEN DI RESET (SOLO PER TEST) ---', resetToken);
+
+    // 4. Invia l'email all'utente con il token NON hashato
+    await sendPasswordResetEmail(user.email, resetToken);
+
+    res.status(200).json({ message: 'Se l\'email è registrata, riceverai un link per il reset.' });
+
+  } catch (error) {
+    console.error("Errore in forgotPassword:", error);
+    res.status(500).json({ message: 'Errore interno del server.' });
+  }
+};
+
+
+// Funzione e logica per l'esecuzione del reset
+export const resetPassword = async (req, res) => {
+  try {
+    // 1. Prendi il token dall'URL e hash-alo per confrontarlo con quello nel DB
+    const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
+
+    // 2. Cerca l'utente con quel token e assicuriamoci che non sia scaduto
+    const user = await User.findOne({
+      passwordResetToken: hashedToken,
+      passwordResetExpires: { $gt: Date.now() }, // $gt significa "greater than" (maggiore di)
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: 'Token non valido o scaduto.' });
+    }
+
+    // 3. Valida e imposta la nuova password
+    const { password, confirmPassword } = req.body;
+    // Qui utilizziamo le stesse validazioni avanzate della registrazione
+    if (password !== confirmPassword || password.length < 8) {
+      return res.status(400).json({ message: 'Password non valida o non corrispondente.' });
+    }
+
+    // 4. Fa l'hash della nuova password e pulisce i campi di reset
+    const salt = await bcrypt.genSalt(10);
+    user.password = await bcrypt.hash(password, salt);
+    user.passwordResetToken = undefined;
+    user.passwordResetExpires = undefined;
+
+    await user.save();
+
+    // 5. Invia una risposta di successo (e il token di login per accedere subito)
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.status(200).json({ message: 'Password resettata con successo!', token });
+
+  } catch (error) {
+    console.error("Errore in resetPassword:", error);
+    res.status(500).json({ message: 'Errore interno del server.' });
+  }
 };

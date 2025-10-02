@@ -15,7 +15,7 @@ const userSchema = new mongoose.Schema({
     },
     password: {
         type: String,
-        // La password è obbligatoria SOLO se non ci si registra tramite Google o Facebook.
+        // La password è obbligatoria SOLO se non ci si registra tramite Google o Facebook
         required: function() {
             return !this.googleId && !this.facebookId;
         },
@@ -34,7 +34,14 @@ const userSchema = new mongoose.Schema({
     facebookId: {
         type: String,
     },
-}, {
+    passwordResetToken: {
+      type: String,
+    },
+    passwordResetExpires: {
+      type: Date,
+    },
+},
+{
     timestamps: true,
 })
     

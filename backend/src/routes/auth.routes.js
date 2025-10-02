@@ -1,6 +1,6 @@
 import express from 'express';
 import passport from 'passport';
-import { register, login, getMyProfile, confirmEmail, googleCallback, facebookCallback, logout } from '../controllers/auth.controller.js';
+import { register, login, getMyProfile, confirmEmail, googleCallback, facebookCallback, logout, forgotPassword, resetPassword } from '../controllers/auth.controller.js';
 import { protect } from '../middleware/auth.middleware.js';
 
 // Creiamo un'istanza del router di Express
@@ -36,6 +36,10 @@ router.get(
 
 // 8. Rotta per il logout (protetta)
 router.post('/logout', protect, logout);
+
+// 9. Rotte per il recupero Password
+router.post('/forgot-password', forgotPassword);
+router.post('/reset-password/:token', resetPassword);
 
 
 export default router;

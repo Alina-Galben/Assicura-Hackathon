@@ -15,7 +15,7 @@ export const sendConfirmationEmail = async (userEmail, token) => {
 
   const msg = {
     to: userEmail,
-    from: 'assicurapoint708@gmail.com', // Usa l'email che hai verificato su SendGrid
+    from: 'assicurapoint708@gmail.com',
     subject: 'Benvenuto in AssicuraPoint! Conferma la tua Email',
     html: `
       <h1>Ciao e benvenuto!</h1>
@@ -30,6 +30,35 @@ export const sendConfirmationEmail = async (userEmail, token) => {
     console.log(`Email di conferma inviata a ${userEmail}`);
   } catch (error) {
     console.error('Errore durante l\'invio dell\'email di conferma:', error);
-    // In un'app reale, qui potresti voler gestire l'errore in modo più specifico
+    // Se sara approvato il progetto l'errore andra gestito in modo più specifico
+  }
+};
+
+/**
+ * Invia un'email per il reset della password.
+ * @param {string} userEmail - L'indirizzo email del destinatario.
+ * @param {string} token - Il token di reset da includere nel link.
+ */
+export const sendPasswordResetEmail = async (userEmail, token) => {
+  const resetUrl = `http://localhost:5170/reset-password/${token}`;
+
+  const msg = {
+    to: userEmail,
+    from: 'assicurapoint708@gmail.com',
+    subject: 'AssicuraPoint - Richiesta di Reset Password',
+    html: `
+      <h1>Hai richiesto di resettare la tua password?</h1>
+      <p>Clicca sul link qui sotto per impostare una nuova password. Il link scadrà tra 10 minuti.</p>
+      <a href="${resetUrl}" target="_blank">Resetta la mia Password</a>
+      <p>Se non hai richiesto tu il reset, ignora questa email.</p>
+    `,
+  };
+
+  try {
+    await sgMail.send(msg);
+    console.log(`Email di reset password inviata a ${userEmail}`);
+  } catch (error) {
+    console.error('Errore durante l\'invio dell\'email di reset:', error);
+    // Se sara approvato il progetto l'errore andra gestito in modo più specifico
   }
 };
