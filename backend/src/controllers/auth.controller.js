@@ -110,8 +110,6 @@ export const login = async (req, res) => {
     }
 
     // 3. CONFRONTA LA PASSWORD
-    // Usiamo bcrypt.compare per confrontare la password inviata dall'utente
-    // con l'hash che abbiamo salvato nel database.
     const isMatch = await bcrypt.compare(password, user.password);
 
     // Se le password non corrispondono, inviamo lo stesso errore generico.
@@ -120,11 +118,8 @@ export const login = async (req, res) => {
     }
 
     // 4. GENERAZIONE DEL TOKEN JWT
-    // Creiamo il "payload", ovvero i dati che vogliamo inserire nel token.
-    // L'ID dell'utente è sufficiente per identificarlo.
-    const payload = {
-      id: user._id
-    };
+    // Creiamo i dati che vogliamo inserire nel token.
+    const payload = { id: user._id, name: user.name };
 
     // "Firmiamo" il token usando il nostro segreto e impostiamo una scadenza (es. 1 ora).
     const token = jwt.sign(
@@ -186,7 +181,7 @@ export const confirmEmail = async (req, res) => {
 // Funzione googleCallback che, proprio come il login normale, genera un token JWT
 export const googleCallback = (req, res) => {
   // L'utente è stato autenticato da Passport e si trova in req.user
-  const payload = { id: req.user._id };
+  const payload = { id: user._id, name: user.name };
 
   const token = jwt.sign(
     payload,
@@ -194,17 +189,14 @@ export const googleCallback = (req, res) => {
     { expiresIn: '1h' }
   );
   
-  // Quando avro il frontend reindirizzerò l'utente al frontend passandogli il token
-  res.status(200).json({
-    message: 'Autenticazione Google avvenuta con successo!',
-    token: token
-  });
+  // Reindirizza al frontend passando il token come parametro
+  res.redirect(`http://localhost:5170/auth/callback?token=${token}`);
 };
 
-// NUOVA funzione per il callback di Facebook è identica a quella di Google.
+// Funzione per il callback di Facebook è identica a quella di Google.
 export const facebookCallback = (req, res) => {
-  // L'utente è stato autenticato da Passport e si trova in req.user
-  const payload = { id: req.user._id };
+
+  const payload = { id: user._id, name: user.name };
 
   const token = jwt.sign(
     payload,
@@ -212,10 +204,7 @@ export const facebookCallback = (req, res) => {
     { expiresIn: '1h' }
   );
 
-  res.status(200).json({
-    message: 'Autenticazione Facebook avvenuta con successo!',
-    token: token
-  });
+  res.redirect(`http://localhost:5170/auth/callback?token=${token}`);
 };
 
 // Funzione per il logout
@@ -265,10 +254,10 @@ export const forgotPassword = async (req, res) => {
 // Funzione e logica per l'esecuzione del reset
 export const resetPassword = async (req, res) => {
   try {
-    // 1. Prendi il token dall'URL e hash-alo per confrontarlo con quello nel DB
+    // 1. Prende il token dall'URL e hash-alo per confrontarlo con quello nel DB
     const hashedToken = crypto.createHash('sha256').update(req.params.token).digest('hex');
 
-    // 2. Cerca l'utente con quel token e assicuriamoci che non sia scaduto
+    // 2. Cerca l'utente con quel token e ci assicuriamo che non sia scaduto
     const user = await User.findOne({
       passwordResetToken: hashedToken,
       passwordResetExpires: { $gt: Date.now() }, // $gt significa "greater than" (maggiore di)

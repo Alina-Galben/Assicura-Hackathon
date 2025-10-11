@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { register } from '../services/authService';
+import SocialAuthButtons from './SocialAuthButtons';
 
 // 1. Accetta la nuova prop 'onSwitchToLogin'
 export default function RegisterForm({ onSwitchToLogin }) {
@@ -12,7 +13,7 @@ export default function RegisterForm({ onSwitchToLogin }) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
   
-  // 2. Va usato uno stato per il messaggio di successo
+  // 2. Stato per il messaggio di successo
   const [successMessage, setSuccessMessage] = useState('');
 
   const handleSubmit = async (event) => {
@@ -130,6 +131,9 @@ export default function RegisterForm({ onSwitchToLogin }) {
           {isLoading ? 'Registrazione in corso...' : 'Registrati'}
         </button>
       </div>
+
+      {/* Pulsanti social */}
+      <SocialAuthButtons />
 
     </form>
   );

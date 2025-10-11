@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 
 export default function Navbar({ onOpenModal, user, onLogout }) {
   return (
@@ -15,7 +16,9 @@ export default function Navbar({ onOpenModal, user, onLogout }) {
           {user ? (
             // Se l'utente è loggato, mostra il suo nome e il pulsante Logout
             <div className="flex items-center gap-4">
-              <span className="font-semibold">Ciao, {user.name}!</span>
+              <Link to="/profilo" className="font-semibold hover:text-blue-600">
+                Ciao, {user.name}!
+              </Link>
               <button onClick={onLogout} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                 Logout
               </button>

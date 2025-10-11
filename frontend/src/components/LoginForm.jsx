@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { login } from '../services/authService';
+import SocialAuthButtons from './SocialAuthButtons';
 
 export default function LoginForm({ onLoginSuccess }) {
 
@@ -75,6 +76,9 @@ export default function LoginForm({ onLoginSuccess }) {
           {isLoading ? 'Accesso in corso...' : 'Accedi'}
         </button>
       </div>
+
+      {/* Pulsanti social */}
+      <SocialAuthButtons />
 
     </form>
   );
