@@ -7,6 +7,8 @@ import LoginForm from './components/LoginForm';
 import RegisterForm from './components/RegisterForm';
 import AuthCallback from './pages/AuthCallback';
 import { saveToken, removeToken, getUserFromToken } from './utils/auth';
+import ForgotPasswordForm from './components/ForgotPasswordForm';
+import ResetPasswordPage from './pages/ResetPasswordPage';
 
 export default function App() {
   // 1. STATI: Per gestire la visibilità del modale, la vista (login/register) e l'utente loggato.
@@ -43,6 +45,14 @@ export default function App() {
       {/* Rotta per il callback di autenticazione */}
       <Route path="/auth/callback"  element={<AuthCallback onLoginSuccess={handleLoginSuccess} />} />
 
+      {/* NUOVA Rotta per il reset password.
+          Questa rotta è FUORI dal MainLayout perché vogliamo che sia una pagina a sé,
+          senza la Navbar dell'utente loggato. */}
+      <Route 
+        path="/reset-password/:token" 
+        element={<ResetPasswordPage onLoginSuccess={handleLoginSuccess} />} 
+      />
+      
       {/* Rotta principale per tutte le altre pagine */}
       <Route  path="/*"  element={
           <MainLayout onOpenModal={openModal} user={currentUser} onLogout={handleLogout}>
@@ -63,26 +73,50 @@ export default function App() {
 
             {/* Modale per l'autenticazione */}
             <Modal isOpen={isModalOpen} onClose={closeModal}>
-              {authView === 'login' ? (
-                // Vista per il LOGIN
-                <div>
-                  <LoginForm onLoginSuccess={handleLoginSuccess} />
-                  <p className="text-center text-sm mt-4">
-                    Non hai un account?{' '}
-                    <button 
-                      onClick={() => setAuthView('register')} 
-                      className="font-bold text-blue-500 hover:text-blue-800"
-                    >
-                      Registrati
-                    </button>
-                  </p>
-                </div>
-              ) : (
-                // Vista per la REGISTRAZIONE
-                <div>
-                  <RegisterForm onSwitchToLogin={() => setAuthView('login')} />
-                </div>
-              )}
+              {
+                {
+                  'login': (
+                    <div>
+                      <LoginForm onLoginSuccess={handleLoginSuccess} />
+                      <div className="text-center text-sm mt-4 flex flex-col sm:flex-row justify-between items-center gap-2">
+                        {/* NUOVO LINK */}
+                        <button onClick={() => setAuthView('forgotPassword')} className="font-bold text-gray-500 hover:text-blue-800">
+                          Password dimenticata?
+                        </button>
+                        <p>
+                          Non hai un account?{' '}
+                          <button onClick={() => setAuthView('register')} className="font-bold text-blue-500 hover:text-blue-800">
+                            Registrati
+                          </button>
+                        </p>
+                      </div>
+                    </div>
+                  ),
+                  'register': (
+                    <div>
+                      <RegisterForm onSwitchToLogin={() => setAuthView('login')} />
+                      <p className="text-center text-sm mt-4">
+                        Hai già un account?{' '}
+                        <button onClick={() => setAuthView('login')} className="font-bold text-blue-500 hover:text-blue-800">
+                          Accedi
+                        </button>
+                      </p>
+                    </div>
+                  ),
+                  // NUOVA VISTA
+                  'forgotPassword': (
+                    <div>
+                      <ForgotPasswordForm />
+                      <p className="text-center text-sm mt-4">
+                        Tornare al{' '}
+                        <button onClick={() => setAuthView('login')} className="font-bold text-blue-500 hover:text-blue-800">
+                          Login
+                        </button>
+                      </p>
+                    </div>
+                  )
+                }[authView]
+              }
             </Modal>
           </MainLayout>
         } 

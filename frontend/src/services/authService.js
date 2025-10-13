@@ -42,3 +42,31 @@ export const getProfile = async () => {
     throw error.response.data;
   }
 };
+
+/**
+ * Invia una richiesta di reset password per l'email specificata.
+ * @param {{email: string}} emailData - L'oggetto contenente l'email dell'utente.
+ */
+export const forgotPassword = async (emailData) => {
+  try {
+    const response = await api.post('/auth/forgot-password', emailData);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};
+
+/**
+ * Resetta la password dell'utente usando il token.
+ * @param {string} token - Il token di reset dall'URL.
+ * @param {object} passwordData - Oggetto con la nuova password e la conferma.
+ */
+export const resetPassword = async (token, passwordData) => {
+  try {
+    // Il token viene passato come parte dell'URL
+    const response = await api.post(`/auth/reset-password/${token}`, passwordData);
+    return response.data;
+  } catch (error) {
+    throw error.response.data;
+  }
+};

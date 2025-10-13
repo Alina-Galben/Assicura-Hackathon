@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { login } from '../services/authService';
 import SocialAuthButtons from './SocialAuthButtons';
+import PasswordInput from './PasswordInput';
 
 export default function LoginForm({ onLoginSuccess }) {
 
@@ -49,20 +50,13 @@ export default function LoginForm({ onLoginSuccess }) {
         />
       </div>
 
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="login-password">
-          Password
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
-          id="login-password"
-          type="password"
-          placeholder="******************"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
+      {/* Nuova Password con la possibilita di vedere le Password */}
+      <PasswordInput
+        id="login-password"
+        label="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
       {/* Mostra i messaggi di errore */}
       {error && <p className="text-red-500 text-xs italic mb-4">{error}</p>}

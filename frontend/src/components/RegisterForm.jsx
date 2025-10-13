@@ -2,6 +2,7 @@
 import { useState } from 'react';
 import { register } from '../services/authService';
 import SocialAuthButtons from './SocialAuthButtons';
+import PasswordInput from './PasswordInput';
 
 // 1. Accetta la nuova prop 'onSwitchToLogin'
 export default function RegisterForm({ onSwitchToLogin }) {
@@ -34,6 +35,9 @@ export default function RegisterForm({ onSwitchToLogin }) {
       setIsLoading(false);
     }
   };
+
+  // Messaggio di errore se le password non corrispondono
+  const passwordMismatchError = password && confirmPassword && password !== confirmPassword;
 
   // 4. Se c'è un messaggio di successo, sullo schermo va mostrata la conferma
   if (successMessage) {
@@ -88,36 +92,25 @@ export default function RegisterForm({ onSwitchToLogin }) {
       </div>
 
       {/* Campo Password */}
-      <div className="mb-4">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="register-password">
-          Password
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          id="register-password"
-          type="password"
-          placeholder="******************"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
+      <PasswordInput
+        id="register-password"
+        label="Password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
 
       {/* Campo Conferma Password */}
-      <div className="mb-6">
-        <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="confirm-password">
-          Conferma Password
-        </label>
-        <input
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
-          id="confirm-password"
-          type="password"
-          placeholder="******************"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword(e.target.value)}
-          required
-        />
-      </div>
+      <PasswordInput
+        id="confirm-password"
+        label="Conferma Password"
+        value={confirmPassword}
+        onChange={(e) => setConfirmPassword(e.target.value)}
+      />
+
+      {/* Bonus: Mostra il messaggio di errore in tempo reale */}
+      {passwordMismatchError && (
+        <p className="text-red-500 text-xs italic">Le password non corrispondono.</p>
+      )}
 
       {/* 4. Mostra i messaggi di errore o successo */}
       {error && <p className="text-red-500 text-xs italic mt-4">{error}</p>}
